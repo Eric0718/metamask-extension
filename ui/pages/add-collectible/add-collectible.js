@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { util } from '@metamask/controllers';
@@ -22,8 +22,12 @@ import {
 } from '../../store/actions';
 import FormField from '../../components/ui/form-field';
 import { getIsMainnet, getUseCollectibleDetection } from '../../selectors';
-import { getCollectiblesDetectionNoticeDismissed } from '../../ducks/metamask/metamask';
+import {
+  getCollectibles,
+  getCollectiblesDetectionNoticeDismissed,
+} from '../../ducks/metamask/metamask';
 import CollectiblesDetectionNotice from '../../components/app/collectibles-detection-notice';
+import { MetaMetricsContext as NewMetaMetricsContext } from '../../contexts/metametrics.new';
 
 export default function AddCollectible() {
   const t = useI18nContext();
@@ -46,7 +50,70 @@ export default function AddCollectible() {
   );
   const [tokenId, setTokenId] = useState('');
   const [disabled, setDisabled] = useState(true);
+  const [eventTracked, setEventTracked] = useState([
+    {
+      event: 'Token Added',
+      address: '',
+      tracked: false,
+    },
+  ]);
+
   const [collectibleAddFailed, setCollectibleAddFailed] = useState(false);
+
+  const trackEvent = useContext(NewMetaMetricsContext);
+  const collectibles = useSelector(getCollectibles);
+
+  useEffect(() => {
+    if (!tokenId || !address) {
+      return;
+    }
+
+    const newCollectible = collectibles.find(
+      (collectible) =>
+        collectible.address === address &&
+        collectible.tokenId === tokenId.toString(),
+    );
+
+    if (!newCollectible) {
+      return;
+    }
+
+    const alreadyTracked = eventTracked.find(
+      (et) => et.address === address && et.tracked === true,
+    );
+
+    if (alreadyTracked) {
+      return;
+    }
+
+    trackEvent({
+      event: 'Token Added',
+      category: 'Wallet',
+      sensitiveProperties: {
+        token_symbol: '',
+        token_contract_address: newCollectible.address,
+        token_decimal_precision: '',
+        tokenId: newCollectible.tokenId,
+        name: newCollectible.name ? newCollectible.name : '',
+        description: newCollectible.description
+          ? newCollectible.description
+          : '',
+        unlisted: '',
+        source: 'detected',
+      },
+    });
+
+    const newEventTracked = {
+      address,
+      event: 'Token Added',
+      tracked: true,
+    };
+
+    setEventTracked((previousEventTracked) => {
+      previousEventTracked.push(newEventTracked);
+      return [...previousEventTracked];
+    });
+  }, [collectibles, address, eventTracked, tokenId, trackEvent]);
 
   const handleAddCollectible = async () => {
     try {
