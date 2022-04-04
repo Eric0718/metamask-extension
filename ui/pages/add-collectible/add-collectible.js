@@ -90,15 +90,12 @@ export default function AddCollectible() {
       event: 'Token Added',
       category: 'Wallet',
       sensitiveProperties: {
-        token_symbol: '',
-        token_contract_address: newCollectible.address,
-        token_decimal_precision: '',
+        token_contract_address: newCollectible.address,        
         tokenId: newCollectible.tokenId,
-        name: newCollectible.name ? newCollectible.name : '',
+        name: newCollectible.name ? newCollectible.name : null,
         description: newCollectible.description
           ? newCollectible.description
-          : '',
-        unlisted: '',
+          : null,
         source: 'detected',
       },
     });
