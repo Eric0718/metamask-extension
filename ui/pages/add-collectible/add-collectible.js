@@ -70,7 +70,7 @@ export default function AddCollectible() {
 
     const newCollectible = collectibles.find(
       (collectible) =>
-        collectible.address === address &&
+        collectible.address.toLowerCase() === address.toLowerCase() &&
         collectible.tokenId === tokenId.toString(),
     );
 
@@ -79,7 +79,9 @@ export default function AddCollectible() {
     }
 
     const alreadyTracked = eventTracked.find(
-      (et) => et.address === address && et.tracked === true,
+      (et) =>
+        et.address.toLowerCase() === address.toLowerCase() &&
+        et.tracked === true,
     );
 
     if (alreadyTracked) {
