@@ -92,10 +92,8 @@ export default function AddCollectible() {
       sensitiveProperties: {
         token_contract_address: newCollectible.address,
         tokenId: newCollectible.tokenId,
-        name: newCollectible.name ? newCollectible.name : null,
-        description: newCollectible.description
-          ? newCollectible.description
-          : null,
+        name: newCollectible.name || null,
+        description: newCollectible.description || null,
         source: 'detected',
       },
     });
