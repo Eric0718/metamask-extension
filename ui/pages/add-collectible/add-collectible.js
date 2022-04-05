@@ -27,7 +27,7 @@ import {
   getCollectiblesDetectionNoticeDismissed,
 } from '../../ducks/metamask/metamask';
 import CollectiblesDetectionNotice from '../../components/app/collectibles-detection-notice';
-import { MetaMetricsContext as NewMetaMetricsContext } from '../../contexts/metametrics.new';
+import { MetaMetricsContext } from '../../contexts/metametrics';
 
 export default function AddCollectible() {
   const t = useI18nContext();
@@ -60,7 +60,7 @@ export default function AddCollectible() {
 
   const [collectibleAddFailed, setCollectibleAddFailed] = useState(false);
 
-  const trackEvent = useContext(NewMetaMetricsContext);
+  const trackEvent = useContext(MetaMetricsContext);
   const collectibles = useSelector(getCollectibles);
 
   useEffect(() => {
@@ -90,7 +90,7 @@ export default function AddCollectible() {
       event: 'Token Added',
       category: 'Wallet',
       sensitiveProperties: {
-        token_contract_address: newCollectible.address,        
+        token_contract_address: newCollectible.address,
         tokenId: newCollectible.tokenId,
         name: newCollectible.name ? newCollectible.name : null,
         description: newCollectible.description
