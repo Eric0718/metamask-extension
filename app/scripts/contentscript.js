@@ -43,8 +43,11 @@ function injectScript(content) {
     const scriptTag = document.createElement('script');
     scriptTag.setAttribute('async', 'false');
     if (process.env.ENABLE_MV3) {
+      console.log('----- 1 ------', browser.runtime.getURL('inpage.js'));
       scriptTag.setAttribute('src', browser.runtime.getURL('inpage.js'));
+      scriptTag.textContent = content;
     } else {
+      console.log('----- 2 ------');
       scriptTag.textContent = content;
     }
     container.insertBefore(scriptTag, container.children[0]);
