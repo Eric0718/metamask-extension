@@ -28,6 +28,7 @@ import {
 } from '../../ducks/metamask/metamask';
 import CollectiblesDetectionNotice from '../../components/app/collectibles-detection-notice';
 import { MetaMetricsContext } from '../../contexts/metametrics';
+import { isEqualCaseInsensitive } from '../../../shared/modules/string-utils';
 
 export default function AddCollectible() {
   const t = useI18nContext();
@@ -70,7 +71,7 @@ export default function AddCollectible() {
 
     const newCollectible = collectibles.find(
       (collectible) =>
-        collectible.address.toLowerCase() === address.toLowerCase() &&
+        isEqualCaseInsensitive(address, collectible.address) &&
         collectible.tokenId === tokenId.toString(),
     );
 
@@ -80,8 +81,7 @@ export default function AddCollectible() {
 
     const alreadyTracked = eventTracked.find(
       (et) =>
-        et.address.toLowerCase() === address.toLowerCase() &&
-        et.tracked === true,
+        isEqualCaseInsensitive(address, et.address) && et.tracked === true,
     );
 
     if (alreadyTracked) {
